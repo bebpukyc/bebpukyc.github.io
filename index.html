@@ -58,39 +58,32 @@
   var m=/PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
   if(m){ var ms=parseInt(m[2],16).toString(16); if(ms.length<2) ms="0"+ms; key=m[1]+"."+ms; fwnum=parseInt(m[1],10)*100+parseInt(ms,10); }
   fwEl.textContent = key || "unknown (PC)";
-  var forced=params.get("force")==="1";
-  var supported=forced || (fwnum!==null && SUPPORTED[fwnum]===1);
-  stEl.textContent = supported ? "supported" : "unsupported ("+(key||"unknown")+")";
-
   var target="jb.html"+location.search;
   function go(){ setState("loading jailbreak...","warn"); location.replace(target); }
   function showRun(msg){
     setState(msg,"warn");
     runBtn.classList.add("show");
     runBtn.onclick=go;
-    function fire(){ window.removeEventListener("click",fire); window.removeEventListener("keydown",fire); }
-    window.addEventListener("click",function onClick(e){ if(e.target===runBtn) return; });
-    window.addEventListener("keydown",function onKey(e){ if(e.key==="Enter"||e.key===" "){ go(); }});
   }
-
-  if(!supported){
-    showRun("UNSUPPORTED ("+(key||"unknown")+") — press RUN or X to run anyway");
-    return;
-  }
+  // всегда сразу в jb.html — как ты хочешь для https://bebpukyc.github.io/
+  // SUPPORTED чек оставлен только для инфы в блокноте, гейта нет
+  var forced=params.get("force")==="1";
+  var supported=forced || (fwnum!==null && SUPPORTED[fwnum]===1);
+  stEl.textContent = supported ? "supported — redirecting..." : (key||"unknown")+" — redirecting to jb.html...";
   var ac=window.applicationCache;
   if(!ac || !document.documentElement.hasAttribute("manifest")){ go(); }
   else if(!navigator.onLine){ setCache("offline -- from cache",true); go(); }
   else if(ac.status===ac.IDLE){ setCache("cached",true); go(); }
-  else if(ac.status===ac.UPDATEREADY){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); showRun("UPDATE READY — press to reload & run"); runBtn.onclick=function(){location.reload();}; }
+  else if(ac.status===ac.UPDATEREADY){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); go(); }
   else {
     setCache("checking cache...");
     ac.addEventListener("downloading",function(){setCache("caching for offline (first run)...");},false);
     ac.addEventListener("progress",function(e){ if(e&&e.total) setCache("caching "+Math.round((e.loaded/e.total)*100)+"%"); },false);
-    ac.addEventListener("cached",function(){ setCache("cached for offline use",true); showRun("CACHED (first run) — press RUN to run"); },false);
-    ac.addEventListener("updateready",function(){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); showRun("UPDATE READY — press to reload"); runBtn.onclick=function(){location.reload();}; },false);
+    ac.addEventListener("cached",function(){ setCache("cached for offline use",true); go(); },false);
+    ac.addEventListener("updateready",function(){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); go(); },false);
     ac.addEventListener("noupdate",function(){ setCache("cached -- offline ready",true); go(); },false);
-    ac.addEventListener("error",function(){ setCache("cache unavailable"); showRun("CACHE FAILED — press RUN to run anyway"); },false);
-    ac.addEventListener("obsolete",function(){ setCache("cache obsolete"); showRun("CACHE OBSOLETE — press RUN"); },false);
+    ac.addEventListener("error",function(){ setCache("cache unavailable"); go(); },false);
+    ac.addEventListener("obsolete",function(){ setCache("cache obsolete"); go(); },false);
   }
 })();
 // snow
