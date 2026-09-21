@@ -9,14 +9,12 @@
   /* bg image - кинь свой арт как bg.png рядом с jb.html, будет поверх bg.svg */
   #bg{position:fixed;inset:0;z-index:0;background-color:#000;background-image:url("bg.png"), url("bg.svg");background-position:center top, center top;background-size:cover, cover;background-repeat:no-repeat, no-repeat; filter:brightness(0.85) contrast(1.05)}
   #bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.85) 100%)}
-  /* snow canvas */
-  #snow{position:fixed;inset:0;z-index:1;pointer-events:none}
   /* center stage */
   #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;box-sizing:border-box}
-  /* notepad txt */
-  #notepad{width:min(520px,92vw);background:rgba(22,26,32,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.14);border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)}
-  #notepad-title{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.1);font:12px/1 Consolas,monospace;color:#aeb8c6;user-select:none}
-  #notepad-title i{width:12px;height:12px;border-radius:2px;background:#7fd0a0;opacity:0.9;box-shadow:0 0 0 1px rgba(0,0,0,0.2) inset}
+  /* notepad txt - no blur/shadow for JB stability */
+  #notepad{width:min(520px,92vw);background:#161a20;border:1px solid #2a3442;border-radius:10px;overflow:hidden}
+  #notepad-title{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#1e242e;border-bottom:1px solid #2a3442;font:12px/1 Consolas,monospace;color:#aeb8c6;user-select:none}
+  #notepad-title i{width:12px;height:12px;border-radius:2px;background:#7fd0a0;opacity:0.9}
   #notepad-title b{font-weight:600;letter-spacing:0.02em}
   #notepad-title span{margin-left:auto;opacity:0.6}
   #notepad-body{padding:14px 16px;font:13px/1.6 Consolas,monospace;color:#d6deea;white-space:pre-wrap;word-break:break-word}
@@ -28,24 +26,21 @@
   body.fail #restartLine{display:block}
   body.fail #nbStatus{color:#ff8a8a}
   /* button */
-  #jbBtn{appearance:none;border:0;cursor:pointer;padding:18px 56px;border-radius:999px;background:linear-gradient(180deg,#f0f3f8 0%, #d7dde7 100%);color:#0b0d10;font:800 18px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.18em;text-transform:uppercase;box-shadow:0 8px 28px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.9) inset;transition:transform .12s, box-shadow .12s, filter .12s}
-  #jbBtn:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.9) inset;filter:brightness(1.03)}
-  #jbBtn:active{transform:translateY(1px) scale(0.99);box-shadow:0 4px 16px rgba(0,0,0,0.5)}
-  #jbBtn:disabled{opacity:0.55;cursor:default;transform:none}
-  #hint{font:12px/1.4 "Segoe UI",system-ui,sans-serif;color:rgba(255,255,255,0.62);letter-spacing:0.04em}
+  #jbBtn{appearance:none;border:0;cursor:pointer;padding:18px 56px;border-radius:999px;background:#e6ebf2;color:#0b0d10;font:800 18px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.18em;text-transform:uppercase}
+  #jbBtn:disabled{opacity:0.55;cursor:default}
   /* spinner - jb.js expects body.done / body.fail */
   #spin{position:fixed;left:50%;top:calc(50% + 92px);width:46px;height:46px;margin-left:-23px;border:4px solid rgba(255,255,255,0.12);border-top-color:#7fd0a0;border-radius:50%;animation:spin 0.9s linear infinite;z-index:3;display:none}
   @keyframes spin{to{transform:rotate(360deg)}}
   body.running #spin{display:block}
-  body.running #hint, body.running #jbBtn{opacity:0;pointer-events:none}
-  body.running #notepad{opacity:0.18;filter:blur(1px);pointer-events:none;transition:opacity .3s}
+  body.running #jbBtn{opacity:0;pointer-events:none}
+  body.running #notepad{opacity:0.18;pointer-events:none}
   body.done #spin{display:none}
   body.fail #spin{display:none}
   /* #msg оставлен для совместимости с jb.js, но скрыт - текст теперь в блокноте */
   #msg{display:none !important}
   /* log mode */
-  #wrap{position:fixed;inset:0;z-index:4;display:none;flex-direction:column;padding:14px 18px;box-sizing:border-box;background:rgba(5,6,8,0.82);backdrop-filter:blur(4px)}
-  body.log #stage, body.log #bg, body.log #snow{display:none}
+  #wrap{position:fixed;inset:0;z-index:4;display:none;flex-direction:column;padding:14px 18px;box-sizing:border-box;background:#050608}
+  body.log #stage, body.log #bg{display:none}
   body.log #wrap{display:flex}
   body.log{overflow:auto}
   #state{font-size:22px;font-weight:700;margin:0 0 8px;color:#e6ebf2}
@@ -55,7 +50,6 @@
 </head>
 <body>
 <div id="bg"></div>
-<canvas id="snow"></canvas>
 
 <div id="stage">
   <div id="notepad">
@@ -112,27 +106,6 @@
     '<span class="k">payload</span>   <span class="'+(isGold?'gold':'hen')+'">'+info.label+'</span> <span class="k">('+info.file+')</span>\n'+
     '<span class="k">status</span>    <span class="v" id="nbStatus">ready</span>\n'+
     '<div id="restartLine">> Restart your console</div>';
-
-  // snow
-  (function(){
-    const c=document.getElementById("snow"), ctx=c.getContext("2d");
-    let w,h, flakes=[];
-    function resize(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; flakes = Array.from({length: Math.min(140, Math.floor(w*h/12000))}, ()=>({x:Math.random()*w, y:Math.random()*h, r: Math.random()*1.8+0.6, vy: Math.random()*0.7+0.35, vx: (Math.random()-0.5)*0.35, a: Math.random()*0.5+0.35}))}
-    window.addEventListener("resize", resize); resize();
-    (function tick(){
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle="#fff";
-      for(const f of flakes){
-        f.y+=f.vy; f.x+=f.vx;
-        if(f.y>h+10) {f.y=-10; f.x=Math.random()*w}
-        if(f.x< -10) f.x=w+10; if(f.x>w+10) f.x=-10;
-        ctx.globalAlpha=f.a;
-        ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,Math.PI*2); ctx.fill();
-      }
-      ctx.globalAlpha=1;
-      requestAnimationFrame(tick);
-    })();
-  })();
 
   // запуск - то что было в jb.html (import jb.js)
   let started=false;

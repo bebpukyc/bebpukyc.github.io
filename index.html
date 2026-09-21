@@ -8,12 +8,11 @@
   html,body{margin:0;padding:0;min-height:100%;background:#050608;color:#c8ced8;font:15px/1.45 "Segoe UI",system-ui,sans-serif;overflow:hidden}
   #bg{position:fixed;inset:0;z-index:0;background-color:#000;background-image:url("bg.png"), url("bg.svg");background-position:center top, center top;background-size:cover, cover;background-repeat:no-repeat, no-repeat;filter:brightness(0.85) contrast(1.05)}
   #bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.85) 100%)}
-  #snow{position:fixed;inset:0;z-index:1;pointer-events:none}
-  #brand{position:fixed;top:0;left:0;right:0;z-index:3;text-align:center;padding:8px 10px;background:rgba(14,17,22,0.92);border-bottom:1px solid #1e2732;backdrop-filter:blur(6px)}
+  #brand{position:fixed;top:0;left:0;right:0;z-index:3;text-align:center;padding:8px 10px;background:#0e1116;border-bottom:1px solid #1e2732}
   #brand b{font-size:15px;font-weight:700;letter-spacing:.14em;color:#e6ebf2;vertical-align:middle}
   #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:60px 20px 20px;box-sizing:border-box}
-  #notepad{width:min(540px,92vw);background:rgba(22,26,32,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.14);border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)}
-  #notepad-title{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.1);font:12px/1 Consolas,monospace;color:#aeb8c6}
+  #notepad{width:min(540px,92vw);background:#161a20;border:1px solid #2a3442;border-radius:10px;overflow:hidden}
+  #notepad-title{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#1e242e;border-bottom:1px solid #2a3442;font:12px/1 Consolas,monospace;color:#aeb8c6}
   #notepad-title i{width:12px;height:12px;border-radius:2px;background:#7fd0a0;opacity:0.9}
   #notepad-title b{font-weight:600;letter-spacing:0.02em}
   #notepad-body{padding:14px 16px;font:13px/1.6 Consolas,monospace;color:#d6deea;white-space:pre-wrap;word-break:break-word}
@@ -22,14 +21,13 @@
   #state.bad{color:#d08a7f} #state.warn{color:#d8c07f} #state.ok{color:#7fd0a0}
   #cache{font:12px/1 Consolas,monospace;color:#5c6672;text-align:center;min-height:14px}
   #cache.cacheok{color:#7fd0a0}
-  #runBtn{appearance:none;border:0;cursor:pointer;padding:16px 48px;border-radius:999px;background:linear-gradient(180deg,#f0f3f8 0%, #d7dde7 100%);color:#0b0d10;font:800 16px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.16em;text-transform:uppercase;box-shadow:0 8px 28px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.9) inset;display:none}
+  #runBtn{appearance:none;border:0;cursor:pointer;padding:16px 48px;border-radius:999px;background:#e6ebf2;color:#0b0d10;font:800 16px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.16em;text-transform:uppercase;display:none}
   #runBtn.show{display:block}
   #hint{font:12px/1.4 "Segoe UI",system-ui,sans-serif;color:rgba(255,255,255,0.55);text-align:center}
 </style>
 </head>
 <body>
 <div id="bg"></div>
-<canvas id="snow"></canvas>
 <div id="brand"><b>PS4 JAILBREAK</b></div>
 <div id="stage">
   <div id="notepad">
@@ -63,8 +61,7 @@
   setState("redirecting to jb.html...","warn");
   setTimeout(go, 300);
 })();
-// snow
-(function(){var c=document.getElementById("snow"),ctx=c.getContext("2d"),w,h,flakes=[];function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;flakes=Array.from({length:Math.min(120,Math.floor(w*h/13000))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+0.6,vy:Math.random()*0.6+0.3,vx:(Math.random()-0.5)*0.3,a:Math.random()*0.4+0.3}))}window.addEventListener("resize",resize);resize();(function tick(){ctx.clearRect(0,0,w,h);ctx.fillStyle="#fff";for(var f of flakes){f.y+=f.vy;f.x+=f.vx;if(f.y>h+10){f.y=-10;f.x=Math.random()*w}ctx.globalAlpha=f.a;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(tick);})();})();
+
 </script>
 </body>
 </html>
