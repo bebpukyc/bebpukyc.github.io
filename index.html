@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" manifest="cache.appcache">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -44,47 +44,24 @@
 </div>
 
 <script>
+// мгновенный редирект — без applicationCache гейта
 (function(){
+  var target="jb.html"+location.search;
+  try{ location.replace(target); return; }catch(e){}
+  // fallback если replace заблокирован — показать кнопку
   var stateEl=document.getElementById("state");
   var fwEl=document.getElementById("fwv");
   var stEl=document.getElementById("st");
   var cvEl=document.getElementById("cv");
   var runBtn=document.getElementById("runBtn");
-  function setState(t,c){ stateEl.textContent=t; stateEl.className=c||""; stEl.textContent=t; }
-  function setCache(t,ok){ cvEl.textContent=t; cvEl.className=ok?"cacheok":""; document.getElementById("cache") && (document.getElementById("cache").textContent=t); }
-  var params=new URLSearchParams(location.search);
-  var SUPPORTED={1302:1,1304:1,1350:1,1352:1};
-  var key=null,fwnum=null;
+  function setState(t,c){ stateEl.textContent=t; stateEl.className=c||""; if(stEl) stEl.textContent=t; }
   var m=/PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
-  if(m){ var ms=parseInt(m[2],16).toString(16); if(ms.length<2) ms="0"+ms; key=m[1]+"."+ms; fwnum=parseInt(m[1],10)*100+parseInt(ms,10); }
-  fwEl.textContent = key || "unknown (PC)";
-  var target="jb.html"+location.search;
+  var key=null; if(m){ var ms=parseInt(m[2],16).toString(16); if(ms.length<2) ms="0"+ms; key=m[1]+"."+ms; }
+  if(fwEl) fwEl.textContent = key || "unknown (PC)";
   function go(){ setState("loading jailbreak...","warn"); location.replace(target); }
-  function showRun(msg){
-    setState(msg,"warn");
-    runBtn.classList.add("show");
-    runBtn.onclick=go;
-  }
-  // всегда сразу в jb.html — как ты хочешь для https://bebpukyc.github.io/
-  // SUPPORTED чек оставлен только для инфы в блокноте, гейта нет
-  var forced=params.get("force")==="1";
-  var supported=forced || (fwnum!==null && SUPPORTED[fwnum]===1);
-  stEl.textContent = supported ? "supported — redirecting..." : (key||"unknown")+" — redirecting to jb.html...";
-  var ac=window.applicationCache;
-  if(!ac || !document.documentElement.hasAttribute("manifest")){ go(); }
-  else if(!navigator.onLine){ setCache("offline -- from cache",true); go(); }
-  else if(ac.status===ac.IDLE){ setCache("cached",true); go(); }
-  else if(ac.status===ac.UPDATEREADY){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); go(); }
-  else {
-    setCache("checking cache...");
-    ac.addEventListener("downloading",function(){setCache("caching for offline (first run)...");},false);
-    ac.addEventListener("progress",function(e){ if(e&&e.total) setCache("caching "+Math.round((e.loaded/e.total)*100)+"%"); },false);
-    ac.addEventListener("cached",function(){ setCache("cached for offline use",true); go(); },false);
-    ac.addEventListener("updateready",function(){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); go(); },false);
-    ac.addEventListener("noupdate",function(){ setCache("cached -- offline ready",true); go(); },false);
-    ac.addEventListener("error",function(){ setCache("cache unavailable"); go(); },false);
-    ac.addEventListener("obsolete",function(){ setCache("cache obsolete"); go(); },false);
-  }
+  if(runBtn){ runBtn.classList.add("show"); runBtn.onclick=go; }
+  setState("redirecting to jb.html...","warn");
+  setTimeout(go, 300);
 })();
 // snow
 (function(){var c=document.getElementById("snow"),ctx=c.getContext("2d"),w,h,flakes=[];function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;flakes=Array.from({length:Math.min(120,Math.floor(w*h/13000))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.6+0.6,vy:Math.random()*0.6+0.3,vx:(Math.random()-0.5)*0.3,a:Math.random()*0.4+0.3}))}window.addEventListener("resize",resize);resize();(function tick(){ctx.clearRect(0,0,w,h);ctx.fillStyle="#fff";for(var f of flakes){f.y+=f.vy;f.x+=f.vx;if(f.y>h+10){f.y=-10;f.x=Math.random()*w}ctx.globalAlpha=f.a;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(tick);})();})();
