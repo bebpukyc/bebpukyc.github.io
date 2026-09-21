@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" manifest="cache.appcache">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>PS4 JAILBREAK</title>
+<style>
+  html,body{margin:0;padding:0;min-height:100%;background:#050608;color:#c8ced8;font:15px/1.45 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+  /* bg image - кинь свой арт как bg.png рядом с jb.html, будет поверх bg.svg */
+  #bg{position:fixed;inset:0;z-index:0;background-color:#000;background-image:url("bg.png"), url("bg.svg");background-position:center top, center top;background-size:cover, cover;background-repeat:no-repeat, no-repeat; filter:brightness(0.85) contrast(1.05)}
+  #bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.85) 100%)}
+  /* snow canvas */
+  #snow{position:fixed;inset:0;z-index:1;pointer-events:none}
+  /* center stage */
+  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px;box-sizing:border-box}
+  /* notepad txt */
+  #notepad{width:min(520px,92vw);background:rgba(22,26,32,0.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.14);border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)}
+  #notepad-title{height:32px;display:flex;align-items:center;gap:8px;padding:0 12px;background:rgba(255,255,255,0.08);border-bottom:1px solid rgba(255,255,255,0.1);font:12px/1 Consolas,monospace;color:#aeb8c6;user-select:none}
+  #notepad-title i{width:12px;height:12px;border-radius:2px;background:#7fd0a0;opacity:0.9;box-shadow:0 0 0 1px rgba(0,0,0,0.2) inset}
+  #notepad-title b{font-weight:600;letter-spacing:0.02em}
+  #notepad-title span{margin-left:auto;opacity:0.6}
+  #notepad-body{padding:14px 16px;font:13px/1.6 Consolas,monospace;color:#d6deea;white-space:pre-wrap;word-break:break-word}
+  #notepad-body .k{color:#7f8ea3}
+  #notepad-body .v{color:#e6ebf2;font-weight:700}
+  #notepad-body .gold{color:#f1d27a}
+  #notepad-body .hen{color:#7fd0a0}
+  #restartLine{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.18);color:#ff8a8a;font-weight:700;letter-spacing:0.04em}
+  body.fail #restartLine{display:block}
+  body.fail #nbStatus{color:#ff8a8a}
+  /* button */
+  #jbBtn{appearance:none;border:0;cursor:pointer;padding:18px 56px;border-radius:999px;background:linear-gradient(180deg,#f0f3f8 0%, #d7dde7 100%);color:#0b0d10;font:800 18px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.18em;text-transform:uppercase;box-shadow:0 8px 28px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.9) inset;transition:transform .12s, box-shadow .12s, filter .12s}
+  #jbBtn:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.9) inset;filter:brightness(1.03)}
+  #jbBtn:active{transform:translateY(1px) scale(0.99);box-shadow:0 4px 16px rgba(0,0,0,0.5)}
+  #jbBtn:disabled{opacity:0.55;cursor:default;transform:none}
+  #hint{font:12px/1.4 "Segoe UI",system-ui,sans-serif;color:rgba(255,255,255,0.62);letter-spacing:0.04em}
+  /* spinner - jb.js expects body.done / body.fail */
+  #spin{position:fixed;left:50%;top:calc(50% + 92px);width:46px;height:46px;margin-left:-23px;border:4px solid rgba(255,255,255,0.12);border-top-color:#7fd0a0;border-radius:50%;animation:spin 0.9s linear infinite;z-index:3;display:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  body.running #spin{display:block}
+  body.running #hint, body.running #jbBtn{opacity:0;pointer-events:none}
+  body.running #notepad{opacity:0.18;filter:blur(1px);pointer-events:none;transition:opacity .3s}
+  body.done #spin{display:none}
+  body.fail #spin{display:none}
+  /* #msg оставлен для совместимости с jb.js, но скрыт - текст теперь в блокноте */
+  #msg{display:none !important}
+  /* log mode */
+  #wrap{position:fixed;inset:0;z-index:4;display:none;flex-direction:column;padding:14px 18px;box-sizing:border-box;background:rgba(5,6,8,0.82);backdrop-filter:blur(4px)}
+  body.log #stage, body.log #bg, body.log #snow{display:none}
+  body.log #wrap{display:flex}
+  body.log{overflow:auto}
+  #state{font-size:22px;font-weight:700;margin:0 0 8px;color:#e6ebf2}
+  #out{white-space:pre-wrap;font:12px/1.45 Consolas,monospace;background:#11151b;border:1px solid #1e2732;border-radius:5px;padding:10px 12px;flex:1;overflow-y:auto;color:#c8ced8}
+  .ok{color:#7fd0a0}.bad{color:#d08a7f}.warn{color:#d8c07f}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="snow"></canvas>
+
+<div id="stage">
+  <div id="notepad">
+    <div id="notepad-title"><i></i><b>payload.txt — Notepad</b><span>— □ ×</span></div>
+    <div id="notepad-body">detecting firmware...
+</div>
+  </div>
+  <button id="jbBtn">JAILBREAK</button>
+  <div id="hint">нажми X / Enter — как было в jb.html</div>
+</div>
+
+<div id="spin"></div>
+<div id="msg">Restart your console</div><!-- скрыто, дублируется в блокноте как #restartLine -->
+
+<div id="wrap"><div id="state"></div><div id="out"></div></div>
+
+<script type="module">
+  const outEl = document.getElementById("out");
+  const stateEl = document.getElementById("state");
+  const body = document.body;
+  const btn = document.getElementById("jbBtn");
+  const notepadBody = document.getElementById("notepad-body");
+  const params = new URLSearchParams(location.search);
+  if(params.get("log")==="1") body.classList.add("log");
+
+  // fw -> payload mapping (совпадает с ps4_offsets.js и index.html)
+  // 13.52 -> goldhen.bin, 13.02/13.04/13.50 -> payload2.bin (HEN), остальные по таблице
+  const PAYLOAD_MAP = {
+    "13.52": {file:"goldhen.bin", label:"GoldHEN"},
+    "13.50": {file:"payload2.bin", label:"HEN"},
+    "13.04": {file:"payload2.bin", label:"HEN"},
+    "13.02": {file:"payload2.bin", label:"HEN"},
+    "13.00": {file:"payload2.bin", label:"HEN"},
+    "12.52": {file:"1250.bin (HEN)", label:"HEN"},
+    "12.50": {file:"1250.bin (HEN)", label:"HEN"},
+    "12.02": {file:"1200.bin (HEN)", label:"HEN"},
+    "12.00": {file:"1200.bin (HEN)", label:"HEN"},
+    "11.50": {file:"(11.50) HEN", label:"HEN"},
+    "11.00": {file:"(11.00) HEN", label:"HEN"},
+  };
+  function detectFw(){
+    const m = /PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
+    if(!m) return {key:"unknown", fwnum:null};
+    let ms = parseInt(m[2],16).toString(16);
+    if(ms.length<2) ms="0"+ms;
+    const key = m[1]+"."+ms;
+    const fwnum = parseInt(m[1],10)*100+parseInt(ms,10);
+    return {key,fwnum};
+  }
+  const fw = detectFw();
+  const info = PAYLOAD_MAP[fw.key] || {file:"payload2.bin", label:"HEN"};
+  const isGold = info.label==="GoldHEN";
+  notepadBody.innerHTML =
+    '<span class="k">firmware</span>  <span class="v">'+fw.key+'</span>\n'+
+    '<span class="k">payload</span>   <span class="'+(isGold?'gold':'hen')+'">'+info.label+'</span> <span class="k">('+info.file+')</span>\n'+
+    '<span class="k">status</span>    <span class="v" id="nbStatus">ready</span>\n'+
+    '<span class="k">userAgent</span> <span class="k">'+String(navigator.userAgent).slice(0,88)+'</span>\n'+
+    '<div id="restartLine">> Restart your console</div>';
+
+  // snow
+  (function(){
+    const c=document.getElementById("snow"), ctx=c.getContext("2d");
+    let w,h, flakes=[];
+    function resize(){ w=c.width=window.innerWidth; h=c.height=window.innerHeight; flakes = Array.from({length: Math.min(140, Math.floor(w*h/12000))}, ()=>({x:Math.random()*w, y:Math.random()*h, r: Math.random()*1.8+0.6, vy: Math.random()*0.7+0.35, vx: (Math.random()-0.5)*0.35, a: Math.random()*0.5+0.35}))}
+    window.addEventListener("resize", resize); resize();
+    (function tick(){
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle="#fff";
+      for(const f of flakes){
+        f.y+=f.vy; f.x+=f.vx;
+        if(f.y>h+10) {f.y=-10; f.x=Math.random()*w}
+        if(f.x< -10) f.x=w+10; if(f.x>w+10) f.x=-10;
+        ctx.globalAlpha=f.a;
+        ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+      requestAnimationFrame(tick);
+    })();
+  })();
+
+  // запуск - то что было в jb.html (import jb.js)
+  let started=false;
+  async function go(){
+    if(started) return; started=true;
+    btn.disabled=true;
+    document.getElementById("nbStatus") && (document.getElementById("nbStatus").textContent="running...");
+    body.classList.add("running");
+    if(stateEl) stateEl.textContent="running the primitive...";
+    try{
+      await import("./jb.js?v=10");
+    }catch(e){
+      body.classList.remove("running"); body.classList.add("fail");
+      const msg=document.getElementById("msg"); if(msg) msg.style.display="block";
+      if(outEl) outEl.textContent += "\n[JB IMPORT FAILED] "+ (e&&e.message||String(e));
+      console.error(e);
+    }
+  }
+  btn.addEventListener("click", go);
+  window.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.code==="Enter"||e.key===" "||e.code==="Space") go(); });
+  // геймпад X (PS4) = клик, также любой клик по stage когда не запущено
+  window.addEventListener("click", (e)=>{ if(e.target===btn) return; if(!started && e.target.closest && e.target.closest("#stage")) { /* ignore notepad drag */ } });
+  // синхрон restart-сообщения с body.fail (jb.js ставит body.className="fail" с "Restart your console")
+  const nbStatusSync = () => {
+    const s=document.getElementById("nbStatus");
+    if(!s) return;
+    if(body.classList.contains("fail")) s.textContent="Restart your console";
+    else if(body.classList.contains("done")) s.textContent="done";
+  };
+  new MutationObserver(nbStatusSync).observe(body,{attributes:true,attributeFilter:["class"]});
+  // также подхватить если jb.js меняет #msg напрямую
+  const msgEl=document.getElementById("msg");
+  if(msgEl) new MutationObserver(()=>{ if(msgEl.textContent) { const s=document.getElementById("nbStatus"); if(s && body.classList.contains("fail")) s.textContent=msgEl.textContent; } }).observe(msgEl,{childList:true,characterData:true,subtree:true});
+
+  // поддержка ?autostart=1 для тестов
+  if(params.get("autostart")==="1") go();
+</script>
+</body>
+</html>

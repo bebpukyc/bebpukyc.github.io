@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<rect width="1920" height="1080" fill="#000"/>
+<!-- right side sketch imitation -->
+<g opacity="0.95">
+  <!-- hair mass -->
+  <path d="M1180 0 L1920 0 L1920 820 Q1680 760 1500 560 Q1320 360 1180 180 Z" fill="#0a0a0a" stroke="#1a1a1a" stroke-width="1"/>
+  <!-- sketch lines hair -->
+  <g stroke="#d8d8d8" stroke-width="1.1" fill="none" opacity="0.9">
+    <path d="M1380 80 Q1420 150 1360 240 Q1340 300 1380 360"/>
+    <path d="M1410 60 Q1480 120 1440 220 Q1420 320 1460 400"/>
+    <path d="M1450 40 Q1520 110 1490 200 Q1470 300 1510 380"/>
+    <path d="M1500 30 Q1570 90 1550 180 Q1530 280 1580 360"/>
+    <path d="M1560 20 Q1630 80 1610 170 Q1590 260 1640 340"/>
+    <path d="M1620 10 Q1690 70 1670 160 Q1650 250 1700 330"/>
+    <path d="M1680 5 Q1740 60 1720 150 Q1700 240 1750 320"/>
+    <path d="M1320 120 Q1280 200 1300 300 Q1320 380 1280 470"/>
+    <path d="M1350 180 Q1310 260 1330 360 Q1350 440 1310 530"/>
+    <!-- cross hatching -->
+    <path d="M1250 200 L1380 260 M1270 260 L1400 320 M1290 320 L1420 380"/>
+    <path d="M1480 420 L1620 420 M1490 440 L1630 440 M1500 460 L1640 460"/>
+  </g>
+  <!-- eye white -->
+  <ellipse cx="1565" cy="405" rx="78" ry="62" fill="#e8e8e8" stroke="#f0f0f0" stroke-width="2"/>
+  <!-- iris / pupil -->
+  <ellipse cx="1568" cy="412" rx="28" ry="28" fill="#111"/>
+  <ellipse cx="1572" cy="405" rx="10" ry="10" fill="#fff" opacity="0.95"/>
+  <ellipse cx="1560" cy="425" rx="4" ry="4" fill="#fff" opacity="0.7"/>
+  <!-- eye outline sketch -->
+  <path d="M1480 405 Q1565 330 1650 405 Q1565 480 1480 405" fill="none" stroke="#fff" stroke-width="2.2" opacity="0.98"/>
+  <!-- under eye shading -->
+  <path d="M1485 445 Q1540 470 1610 450 Q1580 480 1520 490 Q1480 475 1485 445" fill="#1a1a1a" opacity="0.6"/>
+  <!-- face contour -->
+  <path d="M1480 480 Q1520 560 1580 600 Q1650 640 1720 580 Q1750 520 1720 460" fill="none" stroke="#c8c8c8" stroke-width="1.4" opacity="0.85"/>
+  <!-- noise dots -->
+  <g fill="#fff" opacity="0.12">
+    <circle cx="1420" cy="500" r="1"/><circle cx="1435" cy="520" r="1"/><circle cx="1650" cy="540" r="1"/><circle cx="1680" cy="500" r="1"/>
+  </g>
+</g>
+<!-- vignette -->
+<rect width="1920" height="1080" fill="url(#vg)"/>
+<defs><radialGradient id="vg" cx="50%" cy="50%" r="75%"><stop offset="60%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.55"/></radialGradient></defs>
+</svg>
