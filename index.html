@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" manifest="cache.appcache">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -32,7 +32,7 @@
 </head>
 <body>
 <div id="bg"></div>
-<div id="creator"><img src="ava.jpg" alt=""><div><b>Fungal</b><span>creator</span></div></div>
+<div id="creator"><img src="ava.jpg" alt=""><div><b>Fungal</b><span>Site Creator</span></div></div>
 <div id="brand"><b>PS4 JAILBREAK</b></div>
 <div id="stage">
   <div id="notepad">
@@ -47,9 +47,10 @@
 </div>
 
 <script>
-// мгновенный редирект — без applicationCache гейта
+// кеширует jb.html с джейлом и кидает на него; не-PS4 → ooops.html
 (function(){
-  var target="jb.html"+location.search;
+  var isPS4 = /PlayStation\s+4/.test(navigator.userAgent);
+  var target=(isPS4 ? "jb.html" : "ooops.html")+location.search;
   try{ location.replace(target); return; }catch(e){}
   // fallback если replace заблокирован — показать кнопку
   var stateEl=document.getElementById("state");
@@ -62,8 +63,8 @@
   var key=null; if(m){ var ms=parseInt(m[2],16).toString(16); if(ms.length<2) ms="0"+ms; key=m[1]+"."+ms; }
   if(fwEl) fwEl.textContent = key || "unknown (PC)";
   function go(){ setState("loading jailbreak...","warn"); location.replace(target); }
-  if(runBtn){ runBtn.classList.add("show"); runBtn.onclick=go; }
-  setState("redirecting to jb.html...","warn");
+  if(runBtn){ runBtn.textContent = isPS4 ? "RUN ANYWAY — jb.html" : "OPEN ooops.html"; runBtn.classList.add("show"); runBtn.onclick=go; }
+  setState(isPS4 ? "redirecting to jb.html..." : "redirecting to ooops.html...","warn");
   setTimeout(go, 300);
 })();
 

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru" manifest="cache.appcache">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>PS4 JAILBREAK — ooops</title>
+<style>
+  html,body{margin:0;padding:0;min-height:100%;background:#050608;color:#c8ced8;font:15px/1.45 "Segoe UI",system-ui,sans-serif;overflow:hidden}
+  #bg{position:fixed;inset:0;z-index:0;background:#000 url("fon.png") center/cover no-repeat}
+  #bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.20) 0%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.85) 100%)}
+  #snow{position:fixed;inset:0;z-index:1;pointer-events:none}
+  #brand{position:fixed;top:0;left:0;right:0;z-index:3;text-align:center;padding:8px 10px;background:rgba(14,17,22,0.9);border-bottom:1px solid #1e2732;backdrop-filter:blur(6px)}
+  #brand b{font-size:15px;font-weight:700;letter-spacing:.14em;color:#e6ebf2}
+  #stage{position:fixed;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:70px 20px 20px;box-sizing:border-box;text-align:center}
+  #card{width:min(560px,92vw);background:rgba(22,26,32,0.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:28px 22px;box-shadow:0 18px 50px rgba(0,0,0,0.6);animation:pop 0.6s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(12px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)}}
+  #icon{font-size:42px;margin:0 0 10px;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}}
+  h1{margin:0 0 8px;font:800 22px/1.2 "Segoe UI",system-ui,sans-serif;color:#fff;letter-spacing:0.02em}
+  p{margin:0 0 6px;font:14px/1.5 "Segoe UI",system-ui,sans-serif;color:#aeb8c6}
+  p b{color:#e6ebf2}
+  #foot{font:12px/1.4 Consolas,monospace;color:#6b7a90;margin-top:14px;word-break:break-word}
+  #creator{position:fixed;bottom:14px;right:14px;z-index:3;display:flex;align-items:center;gap:10px;padding:7px 12px 7px 7px;background:#161a20;border:1px solid #2a3442;border-radius:999px}
+  #creator img{width:32px;height:32px;border-radius:50%;object-fit:cover;display:block}
+  #creator b{font:700 13px/1 "Segoe UI",system-ui,sans-serif;color:#e6ebf2;display:block;letter-spacing:0.02em}
+  #creator span{font:11px/1 "Segoe UI",system-ui,sans-serif;color:#8b95a3;letter-spacing:0.04em}
+  #btns{margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .btn{appearance:none;border:0;cursor:pointer;padding:12px 20px;border-radius:999px;font:700 13px/1 "Segoe UI",system-ui,sans-serif;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;display:inline-block}
+  .btn-primary{background:#e6ebf2;color:#0b0d10}
+  .btn-ghost{background:transparent;color:#c8ced8;border:1px solid #2a3442}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<canvas id="snow"></canvas>
+<div id="brand"><b>PS4 JAILBREAK</b></div>
+<div id="creator"><img src="ava.jpg" alt=""><div><b>Fungal</b><span>Site Creator</span></div></div>
+<div id="stage">
+  <div id="card">
+    <div id="icon">⚠️</div>
+    <h1>Ваше устройство не поддерживает джейлбрейк</h1>
+    <p>Этот сайт работает только на <b>PlayStation 4</b> с прошивкой <b>11.00 — 13.52</b></p>
+    <p>Открой <b>bebpukyc.github.io</b> в браузере PS4 и нажми <b>JAILBREAK</b></p>
+    <p style="margin-top:12px;color:#7f8ea3;font-size:13px">На ПК/телефоне эксплойт не запустится — нужен WebKit PS4</p>
+    <div id="foot">UA: <span id="ua"></span></div>
+    <div id="btns">
+      <a class="btn btn-ghost" href="https://github.com/bebpukyc/bebpukyc.github.io" target="_blank">GitHub</a>
+      <a class="btn btn-primary" href="jb.html">Всё равно открыть jb.html</a>
+    </div>
+  </div>
+</div>
+<script>
+// snow для не-PS4 можно — не мешает джейлу
+(function(){var c=document.getElementById("snow"),ctx=c.getContext("2d"),w,h,flakes=[];function resize(){w=c.width=window.innerWidth;h=c.height=window.innerHeight;flakes=Array.from({length:Math.min(90,Math.floor(w*h/15000))},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.4+0.6,vy:Math.random()*0.5+0.25,vx:(Math.random()-0.5)*0.25,a:Math.random()*0.35+0.25}))}window.addEventListener("resize",resize);resize();(function tick(){ctx.clearRect(0,0,w,h);ctx.fillStyle="#fff";for(var f of flakes){f.y+=f.vy;f.x+=f.vx;if(f.y>h+10){f.y=-10;f.x=Math.random()*w}ctx.globalAlpha=f.a;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();}ctx.globalAlpha=1;requestAnimationFrame(tick);})();})();
+document.getElementById("ua").textContent=navigator.userAgent;
+</script>
+</body>
+</html>
