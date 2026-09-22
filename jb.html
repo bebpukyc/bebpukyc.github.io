@@ -104,18 +104,30 @@
     const fwnum = parseInt(m[1],10)*100+parseInt(ms,10);
     return {key,fwnum};
   }
+  const isPS4 = /PlayStation\s+4/.test(navigator.userAgent);
   const fw = detectFw();
   const info = PAYLOAD_MAP[fw.key] || {file:"payload2.bin", label:"HEN"};
   const isGold = info.label==="GoldHEN";
-  notepadBody.innerHTML =
-    '<span class="k">firmware</span>  <span class="v">'+fw.key+'</span>\n'+
-    '<span class="k">payload</span>   <span class="'+(isGold?'gold':'hen')+'">'+info.label+'</span> <span class="k">('+info.file+')</span>\n'+
-    '<span class="k">status</span>    <span class="v" id="nbStatus">ready</span>\n'+
-    '<div id="restartLine">> Restart your console</div>';
+  if(!isPS4){
+    var dev = /iPhone|iPad|iPod/.test(navigator.userAgent) ? "Phone (iOS)" : /Android/.test(navigator.userAgent) ? "Phone (Android)" : /Windows|Mac|CrOS|Linux/.test(navigator.userAgent) ? "PC" : "unknown";
+    notepadBody.innerHTML =
+      '<span class="k">firmware</span>  <span class="v">'+dev+'</span>\n'+
+      '<span class="k">payload</span>   <span class="k">—</span>\n'+
+      '<span class="k">status</span>    <span class="v" id="nbStatus">unsupported device</span>\n'+
+      '<div id="restartLine">> Restart your console</div>';
+    btn.disabled=true; btn.style.opacity="0.35"; btn.style.pointerEvents="none"; btn.style.filter="grayscale(1)";
+  } else {
+    notepadBody.innerHTML =
+      '<span class="k">firmware</span>  <span class="v">'+fw.key+'</span>\n'+
+      '<span class="k">payload</span>   <span class="'+(isGold?'gold':'hen')+'">'+info.label+'</span> <span class="k">('+info.file+')</span>\n'+
+      '<span class="k">status</span>    <span class="v" id="nbStatus">ready</span>\n'+
+      '<div id="restartLine">> Restart your console</div>';
+  }
 
-  // запуск - то что было в jb.html (import jb.js)
+  // запуск - то что было в jb.html (import jb.js) — на PC/Phone не запускать
   let started=false;
   async function go(){
+    if(!isPS4) return;
     if(started) return; started=true;
     btn.disabled=true;
     document.getElementById("nbStatus") && (document.getElementById("nbStatus").textContent="running...");
