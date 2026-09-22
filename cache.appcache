@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# rev 20260922-pc-ooops-fix-11
+# rev 20260922-win-success-12
 
 index.html
 jb.html
@@ -13,6 +13,7 @@ ps4_offsets.js #12e3886508e13e176018691def0a192c352b72959e2d1f1ea2b8fbd90a62b2dc
 rpc_worker.js #2d030c4cc92f46f96e1e4aea0463e1cde84e7f9a2ec17411473880a0c3f4e682
 fon.png
 ava.jpg
+big241758.jpg
 bg.svg
 bg.png
 payload2.bin #fab982aea6c9b2aa9d590eae4adb1530f7b4ccd32322c097d6e3c2527bbd6135

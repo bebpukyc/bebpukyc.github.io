@@ -43,9 +43,19 @@
   body.fail #spin{display:none}
   /* #msg оставлен для совместимости с jb.js, но скрыт - текст теперь в блокноте */
   #msg{display:none !important}
+  /* success window like Windows */
+  #winOverlay{display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+  #winOverlay.show{display:flex}
+  #win{width:min(520px,88vw);background:#1e1e1e;border:1px solid #3a3a3a;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+  #winHead{height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 0 0 12px;background:#2b2b2b;border-bottom:1px solid #3a3a3a;font:12px/1 "Segoe UI",system-ui,sans-serif;color:#d0d0d0}
+  #winHead b{font-weight:600}
+  #winClose{appearance:none;border:0;background:#e81123;color:#fff;width:46px;height:32px;font:18px/1 sans-serif;cursor:pointer}
+  #winClose:hover{background:#c00}
+  #winBody{padding:0;background:#000}
+  #winBody img{width:100%;height:auto;display:block;max-height:62vh;object-fit:contain}
   /* log mode */
   #wrap{position:fixed;inset:0;z-index:4;display:none;flex-direction:column;padding:14px 18px;box-sizing:border-box;background:#050608}
-  body.log #stage, body.log #bg{display:none}
+  body.log #stage, body.log #bg, body.log #winOverlay{display:none}
   body.log #wrap{display:flex}
   body.log{overflow:auto}
   #state{font-size:22px;font-weight:700;margin:0 0 8px;color:#e6ebf2}
@@ -70,6 +80,7 @@
 <div id="msg">Restart your console</div><!-- скрыто, дублируется в блокноте как #restartLine -->
 
 <div id="wrap"><div id="state"></div><div id="out"></div></div>
+<div id="winOverlay"><div id="win"><div id="winHead"><b>Success</b><button id="winClose">×</button></div><div id="winBody"><img src="big241758.jpg" alt=""></div></div></div>
 
 <script type="module">
   const outEl = document.getElementById("out");
@@ -146,12 +157,18 @@
   window.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.code==="Enter"||e.key===" "||e.code==="Space") go(); });
   // геймпад X (PS4) = клик, также любой клик по stage когда не запущено
   window.addEventListener("click", (e)=>{ if(e.target===btn) return; if(!started && e.target.closest && e.target.closest("#stage")) { /* ignore notepad drag */ } });
+  // окно после удачного джейла
+  const winOverlay=document.getElementById("winOverlay");
+  const winClose=document.getElementById("winClose");
+  if(winClose) winClose.onclick=()=> winOverlay && winOverlay.classList.remove("show");
+  if(winOverlay) winOverlay.addEventListener("click",(e)=>{ if(e.target===winOverlay) winOverlay.classList.remove("show"); });
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape" && winOverlay) winOverlay.classList.remove("show"); });
   // синхрон restart-сообщения с body.fail (jb.js ставит body.className="fail" с "Restart your console")
   const nbStatusSync = () => {
     const s=document.getElementById("nbStatus");
     if(!s) return;
     if(body.classList.contains("fail")) s.textContent="Restart your console";
-    else if(body.classList.contains("done")) s.textContent="done";
+    else if(body.classList.contains("done")) { s.textContent="done"; if(winOverlay) winOverlay.classList.add("show"); }
   };
   new MutationObserver(nbStatusSync).observe(body,{attributes:true,attributeFilter:["class"]});
   // также подхватить если jb.js меняет #msg напрямую
