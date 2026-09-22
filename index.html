@@ -47,25 +47,47 @@
 </div>
 
 <script>
-// кеширует jb.html с джейлом и кидает на него; не-PS4 → ooops.html
 (function(){
-  var isPS4 = /PlayStation\s+4/.test(navigator.userAgent);
-  var target=(isPS4 ? "jb.html" : "ooops.html")+location.search;
-  try{ location.replace(target); return; }catch(e){}
-  // fallback если replace заблокирован — показать кнопку
   var stateEl=document.getElementById("state");
   var fwEl=document.getElementById("fwv");
   var stEl=document.getElementById("st");
   var cvEl=document.getElementById("cv");
   var runBtn=document.getElementById("runBtn");
   function setState(t,c){ stateEl.textContent=t; stateEl.className=c||""; if(stEl) stEl.textContent=t; }
+  function setCache(t,ok){ cvEl.textContent=t; if(ok) cvEl.style.color="#7fd0a0"; }
+  var isPS4 = /PlayStation\s+4/.test(navigator.userAgent);
+  var target=(isPS4 ? "jb.html" : "ooops.html")+location.search;
   var m=/PlayStation\s+4[\/ ](\d+)\.(\d+)/.exec(navigator.userAgent);
   var key=null; if(m){ var ms=parseInt(m[2],16).toString(16); if(ms.length<2) ms="0"+ms; key=m[1]+"."+ms; }
   if(fwEl) fwEl.textContent = key || "unknown (PC)";
-  function go(){ setState("loading jailbreak...","warn"); location.replace(target); }
-  if(runBtn){ runBtn.textContent = isPS4 ? "RUN ANYWAY — jb.html" : "OPEN ooops.html"; runBtn.classList.add("show"); runBtn.onclick=go; }
-  setState(isPS4 ? "redirecting to jb.html..." : "redirecting to ooops.html...","warn");
-  setTimeout(go, 300);
+  function go(){ setState("loading "+(isPS4?"jb.html":"ooops.html")+"...","warn"); location.replace(target); }
+  function showRun(msg){
+    setState(msg,"warn");
+    runBtn.textContent = isPS4 ? "RUN ANYWAY — jb.html" : "OPEN ooops.html";
+    runBtn.classList.add("show");
+    runBtn.onclick=go;
+    function fire(){ window.removeEventListener("click",fire); window.removeEventListener("keydown",fire); go(); }
+    window.addEventListener("click",fire);
+    window.addEventListener("keydown",fire);
+  }
+  var ac=window.applicationCache;
+  // без манифеста — сразу
+  if(!ac || !document.documentElement.hasAttribute("manifest")){ go(); return; }
+  if(!navigator.onLine){ setCache("offline -- from cache",true); go(); return; }
+  if(ac.status===ac.IDLE){ setCache("cached",true); go(); return; }
+  if(ac.status===ac.UPDATEREADY){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); showRun("UPDATE READY — press to reload"); runBtn.onclick=function(){location.reload();}; return; }
+  // CHECKING/DOWNLOADING — ждем кеш, потом кидаем (иначе оффлайн не воркает)
+  setCache("checking cache...");
+  var went=false; function tryGo(){ if(went) return; went=true; go(); }
+  ac.addEventListener("downloading",function(){ setCache("caching for offline..."); },false);
+  ac.addEventListener("progress",function(e){ if(e&&e.total) setCache("caching "+Math.round((e.loaded/e.total)*100)+"%"); },false);
+  ac.addEventListener("cached",function(){ setCache("cached for offline",true); tryGo(); },false);
+  ac.addEventListener("noupdate",function(){ setCache("cached -- offline ready",true); tryGo(); },false);
+  ac.addEventListener("updateready",function(){ try{ac.swapCache();}catch(e){} setCache("update downloaded",true); showRun("UPDATE READY — press to reload"); runBtn.onclick=function(){location.reload();}; },false);
+  ac.addEventListener("error",function(){ setCache("cache unavailable"); showRun("CACHE FAILED — press RUN"); },false);
+  ac.addEventListener("obsolete",function(){ setCache("cache obsolete"); showRun("CACHE OBSOLETE — press RUN"); },false);
+  // фолбек если кеш завис — все равно кинем через 3с
+  setTimeout(tryGo, 3000);
 })();
 
 </script>

@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# rev 20260922-win-success-12
+# rev 20260922-cache-fix-13
 
 index.html
 jb.html
@@ -15,7 +15,6 @@ fon.png
 ava.jpg
 big241758.jpg
 bg.svg
-bg.png
 payload2.bin #fab982aea6c9b2aa9d590eae4adb1530f7b4ccd32322c097d6e3c2527bbd6135
 goldhen.bin #48d46667249330c9be48c96a2a3a2dab4464dababa8fcb3e38170c98caf3851f
 patches/1302.bin #76584f8a02be806816aa7987ff6f2aed3a4a7f9494c49643e32f9cb9d75ab71b
